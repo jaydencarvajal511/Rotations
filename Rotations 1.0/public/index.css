@@ -1,0 +1,380 @@
+@import url("https://fonts.googleapis.com/css2?family=Mukta:wght@200;300;400;500;600;700;800&family=Noto+Serif:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@100&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@100&family=Poppins&family=Roboto&display=swap");
+
+@media screen and (max-width: 600px) {
+  html {
+    font-family: "Noto Serif", serif;
+    background: #e6e6ea;
+    color: #009fb7;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  /*
+#241623
+#009FB7
+#E6E6EA
+#F4F4F8
+*/
+
+  .signedOut {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  .signedOut h1 {
+    font-size: 3em;
+    padding: 0.5em;
+    transform: translateY(-2rem);
+    color: #241623;
+  }
+
+  .signedOut p {
+    padding: 1.5em;
+    transform: translateY(-6rem);
+    color: #241623;
+    font-weight: bold;
+    font-family: "Mukta", sans-serif;
+  }
+
+  .signedOut button {
+    align-self: center;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.5em;
+    font-family: "Mukta", sans-serif;
+    background-color: #f4f4f8;
+    border: none;
+    border-radius: 0.5rem;
+    fill: #241623;
+    color: #241623;
+    box-shadow: #2e2f2f 0.2rem 0.2rem;
+  }
+
+  .signedOut button svg {
+    background: #f4f4f8;
+  }
+
+  .bg-rotate {
+    position: fixed;
+    font-size: 200vw;
+    background-color: #e6e6ea;
+    fill: #009fb737;
+    z-index: -1;
+  }
+
+  footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    height: 10%;
+    position: fixed;
+    bottom: 0;
+    fill: #241623;
+    background-color: #e6e6ea;
+  }
+
+  footer * {
+    font-size: 3rem;
+    text-align: center;
+  }
+
+  .search-prompt {
+    position: fixed;
+    text-align: center;
+    width: 50%;
+    bottom: 50%;
+    right: 25%;
+    fill: #009fb7;
+  }
+
+  .search-prompt svg {
+    font-size: 3rem;
+  }
+
+  nav {
+    position: relative;
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 20px 0;
+  }
+
+  nav div {
+    width: 80%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  #searchTerm {
+    border: 0;
+    border-bottom: 1px solid black;
+    border-radius: 0;
+    font-size: 20px;
+    outline: none;
+    font-family: "Lato", sans-serif;
+    font-weight: bold;
+    width: 80%;
+    background-color: #e6e6ea;
+  }
+
+  #searchTermBtn {
+    font-size: 1.5em;
+    fill: #009fb7;
+  }
+
+  main {
+    position: relative;
+    padding: 50px 20px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  main article {
+    overflow: hidden;
+    background: #f4f4f8;
+    display: flex;
+    border: black 1px solid;
+    border-radius: 15px;
+    margin: 0.5rem;
+  }
+
+  main article img {
+    padding: 20px;
+    width: 100px;
+    height: 100px;
+    border-radius: 20%;
+  }
+
+  main article {
+    width: 100%;
+  }
+
+  main article * {
+    background: none;
+    color: #241623;
+  }
+
+  .popup {
+    position: fixed;
+    display: none;
+    top: 30vw;
+    left: 20vw;
+    width: 60vw;
+    overflow: hidden;
+    padding-bottom: 2rem;
+  }
+
+  #uniqueAlbumMessage {
+    color: red;
+    font-size: 3.5vw;
+    text-align: center;
+  }
+
+  .albumInfo {
+    background-color: #241623;
+    padding: 0.5rem;
+  }
+
+  .popup img {
+    width: 55vw;
+    height: 55vw;
+    border-radius: 12px;
+  }
+
+  .popup .artistDate {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    color: #009fb7;
+    gap: 1ch;
+    font-weight: bold;
+  }
+
+  .popup h1 {
+    word-wrap: break-word;
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  .saveOption {
+    display: flex;
+    justify-content: space-evenly;
+    transform: translateY(1rem);
+  }
+
+  .saveOption svg {
+    background-color: #009fb7;
+    border-radius: 50%;
+    font-size: 2rem;
+    padding: 1rem;
+    fill: #f4f4f8;
+  }
+
+  .rollAnimation {
+    animation-name: rollAnimation;
+    animation-duration: 1.5s;
+  }
+
+  @keyframes rollAnimation {
+    from {
+      transform: translateX(0) rotate(0deg);
+    }
+
+    to {
+      transform: translateX(40vw) rotate(360deg);
+    }
+  }
+
+  .fadeOutAnimation {
+    animation-name: fadeOutAnimation;
+    animation-duration: 1s;
+  }
+
+  @keyframes fadeOutAnimation {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  .rating {
+    background: none;
+    border: none;
+    border-bottom: 1px solid #009fb7;
+    color: #009fb7;
+    width: 50%;
+    outline: none;
+    text-align: center;
+    font-size: 3rem;
+    padding: 0;
+    animation: fadeIn;
+    animation-duration: 0.5s;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .submitBar {
+    display: flex;
+    gap: 15%;
+  }
+
+  #albumsHeader {
+    font-family: "Poppins", sans-serif;
+    font-size: 1.8rem;
+    margin-left: 2rem;
+    transform: translateY(-4rem);
+    width: 75%;
+  }
+
+  .hamburgerMenu {
+    font-size: 3rem;
+    margin-top: 1rem;
+    margin-left: 85%;
+    z-index: 10;
+  }
+
+  #albums {
+    transform: translateY(-6rem);
+    margin: 0;
+  }
+
+  .moreInfo {
+    position: fixed;
+    top: 20vw;
+    left: 11vw;
+    width: 70vw;
+    background-color: #241623;
+    padding: 1rem;
+    text-align: center;
+    display: none;
+  }
+
+  .moreInfoBackdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #e6e6ea;
+    display: none;
+  }
+
+  .moreInfo img {
+    border-radius: 12px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    aspect-ratio: 1/1;
+  }
+
+  .moreInfoAlbumInfo {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .moreInfoButtons {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .moreInfoButtons button {
+    background: #f4f4f8;
+    border: none;
+    border-radius: 0.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    fill: #009fb7;
+    color: #009fb7;
+    font-size: 1.5em;
+  }
+
+  .sortMenu {
+    position: absolute;
+    top: 0;
+    background-color: #241623;
+    width: 100%;
+    transform: translateY(-15vh);
+  }
+
+  .flexRow {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .sortMenu p {
+    width: 33.333%;
+    text-align: center;
+  }
+}

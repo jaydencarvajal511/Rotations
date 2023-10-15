@@ -1,0 +1,371 @@
+@media screen and (min-width: 600px) {
+  html {
+    font-family: "Noto Serif", serif;
+    background: #e6e6ea;
+    color: #009fb7;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  /*
+#241623
+#009FB7
+#E6E6EA
+#F4F4F8
+*/
+
+  .signedOut {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  .signedOut h1 {
+    font-size: 3em;
+    padding: 0.5em;
+    transform: translateY(-2rem);
+    color: #241623;
+  }
+
+  .signedOut p {
+    padding: 1.5em;
+    transform: translateY(-6rem);
+    color: #241623;
+    font-weight: bold;
+    font-family: "Mukta", sans-serif;
+  }
+
+  .signedOut button {
+    align-self: center;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.5em;
+    font-family: "Mukta", sans-serif;
+    background-color: #f4f4f8;
+    border: none;
+    border-radius: 0.5rem;
+    fill: #241623;
+    color: #241623;
+    box-shadow: #2e2f2f 0.2rem 0.2rem;
+  }
+
+  .signedOut button svg {
+    background: #f4f4f8;
+  }
+
+  .bg-rotate {
+    position: fixed;
+    font-size: 200vw;
+    background-color: #e6e6ea;
+    fill: #009fb737;
+    z-index: -1;
+  }
+
+  footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    height: 10%;
+    position: fixed;
+    bottom: 0;
+    fill: #241623;
+    background-color: #e6e6ea;
+  }
+
+  footer * {
+    font-size: 3rem;
+    text-align: center;
+  }
+
+  .search-prompt {
+    position: fixed;
+    text-align: center;
+    width: 50%;
+    bottom: 50%;
+    right: 25%;
+    fill: #009fb7;
+    z-index: -2;
+  }
+
+  .search-prompt svg {
+    font-size: 3rem;
+  }
+
+  nav {
+    position: relative;
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 20px 0;
+  }
+
+  nav div {
+    width: 80%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  #searchTerm {
+    border: 0;
+    border-bottom: 1px solid black;
+    border-radius: 0;
+    font-size: 20px;
+    outline: none;
+    font-family: "Lato", sans-serif;
+    font-weight: bold;
+    width: 80%;
+    background-color: #e6e6ea;
+  }
+
+  #searchTermBtn {
+    font-size: 1.5em;
+    fill: #009fb7;
+  }
+
+  main {
+    padding: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+
+  main article {
+    width: 30%;
+    background: #f4f4f8;
+    border: black 1px solid;
+    border-radius: 15px;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    color: #241623;
+  }
+
+  main article * {
+    text-align: center;
+  }
+
+  main article img {
+    width: 35%;
+    border-radius: 10%;
+    margin-top: 1rem;
+  }
+
+  .popup {
+    position: fixed;
+    display: none;
+    top: 6vw;
+    left: 20vw;
+    width: 60vw;
+    text-align: center;
+  }
+
+  #uniqueAlbumMessage {
+    color: red;
+    font-size: 3.5vw;
+    text-align: center;
+  }
+
+  .albumInfo {
+    background-color: #241623;
+    padding: 0.5rem;
+  }
+
+  .popup img {
+    width: 55%;
+    height: 55%;
+    border-radius: 12px;
+  }
+
+  .popup .artistDate {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    color: #009fb7;
+    gap: 1ch;
+    font-weight: bold;
+  }
+
+  .popup h1 {
+    word-wrap: break-word;
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  .saveOption {
+    display: flex;
+    justify-content: space-evenly;
+    transform: translateY(1rem);
+  }
+
+  .saveOption svg {
+    background-color: #009fb7;
+    border-radius: 50%;
+    font-size: 2rem;
+    padding: 1rem;
+    fill: #f4f4f8;
+  }
+
+  .rollAnimation {
+    animation-name: rollAnimation;
+    animation-duration: 1.5s;
+  }
+
+  @keyframes rollAnimation {
+    from {
+      transform: translateX(0) rotate(0deg);
+    }
+
+    to {
+      transform: translateX(40vw) rotate(360deg);
+    }
+  }
+
+  .fadeOutAnimation {
+    animation-name: fadeOutAnimation;
+    animation-duration: 1s;
+  }
+
+  @keyframes fadeOutAnimation {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  .rating {
+    background: none;
+    border: none;
+    border-bottom: 1px solid #009fb7;
+    color: #009fb7;
+    width: 50%;
+    outline: none;
+    text-align: center;
+    font-size: 3rem;
+    padding: 0;
+    animation: fadeIn;
+    animation-duration: 0.5s;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .submitBar {
+    display: flex;
+    gap: 15%;
+  }
+
+  #albumsHeader {
+    font-family: "Poppins", sans-serif;
+    font-size: 1.8rem;
+    margin-left: 2rem;
+    transform: translateY(-4rem);
+    width: 75%;
+  }
+
+  .hamburgerMenu {
+    font-size: 3rem;
+    margin-top: 1rem;
+    margin-left: 85%;
+    z-index: 10;
+  }
+
+  #albums {
+    transform: translateY(-6rem);
+    margin: 0;
+  }
+
+  .moreInfo {
+    position: fixed;
+    top: 6vw;
+    width: 50vw;
+    left: 25vw;
+    background-color: #241623;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .moreInfoBackdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #e6e6ea;
+    display: none;
+  }
+
+  .moreInfo img {
+    width: 45%;
+    height: 45%;
+    border-radius: 10%;
+  }
+
+  .moreInfoAlbumInfo {
+    width: 50%;
+    padding-left: 25%;
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .moreInfoButtons {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .moreInfoButtons button {
+    background: #f4f4f8;
+    border: none;
+    border-radius: 0.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    fill: #009fb7;
+    color: #009fb7;
+    font-size: 1.5em;
+  }
+
+  .sortMenu {
+    position: absolute;
+    top: 0;
+    background-color: #241623;
+    width: 100%;
+    transform: translateY(-15vh);
+  }
+
+  .flexRow {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .sortMenu p {
+    width: 33.333%;
+    text-align: center;
+  }
+}
