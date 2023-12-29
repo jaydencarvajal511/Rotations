@@ -10,6 +10,25 @@ const userDetails = document.getElementById("userDetails");
 
 const provider = new firebase.auth.GoogleAuthProvider();
 
+const CLIENT_ID = "fd71ab4b2dac4c4fa851139a48455d0e";
+const CLIENT_SECRET = "691879d437c3461b999948e92374163a";
+
+// API ACCESS TOKEN
+
+var authParameters = {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded",
+  },
+  body: "grant_type=client_credentials&client_id=" + CLIENT_ID + "&client_secret=" + CLIENT_SECRET,
+};
+
+fetch("https://accounts.spotify.com/api/token", authParameters)
+  .then((result) => result.json())
+  .then((data) => {
+    accessToken = data.access_token;
+  });
+
 let albumData;
 let page = "search";
 originalListenedOrder = [];
@@ -93,9 +112,8 @@ function buildListenedAlbums() {
     article.appendChild(showImg);
     article.appendChild(div);
 
-    article.setAttribute("onclick", `moreInfo('${showArtistName.innerHTML}','${showAlbumTitle.innerHTML}', '${showImg.src}', '${listenedData[i].albumData.releaseDate}', '${listenedData[i].albumData.genreName}', '${listenedData[i].score}', '${listenedData[i].createdAt}', '${listenedData[i].docId}')`);
+    article.setAttribute("onclick", `moreInfo('${showArtistName.innerHTML}','${showAlbumTitle.innerHTML}', '${showImg.src}', '${listenedData[i].albumData.releaseDate}', '${listenedData[i].score}', '${listenedData[i].createdAt}', '${listenedData[i].docId}')`);
     article.dataset.artistName = listenedData[i].albumData.artistName;
-    article.dataset.genre = listenedData[i].albumData.genreName;
     article.dataset.releaseDate = listenedData[i].albumData.releaseDate;
 
     document.getElementById("albums").appendChild(article);
@@ -129,9 +147,8 @@ function buildWantToListenAlbums() {
     article.appendChild(showImg);
     article.appendChild(div);
 
-    article.setAttribute("onclick", `moreInfo('${showArtistName.innerHTML}','${showAlbumTitle.innerHTML}', '${showImg.src}', '${wantToListenData[i].albumData.releaseDate}', '${wantToListenData[i].albumData.genreName}', '${wantToListenData[i].score}', '${wantToListenData[i].createdAt}', '${wantToListenData[i].docId}')`);
+    article.setAttribute("onclick", `moreInfo('${showArtistName.innerHTML}','${showAlbumTitle.innerHTML}', '${showImg.src}', '${wantToListenData[i].albumData.releaseDate}', '${wantToListenData[i].score}', '${wantToListenData[i].createdAt}', '${wantToListenData[i].docId}')`);
     article.dataset.artistName = wantToListenData[i].albumData.artistName;
-    article.dataset.genre = wantToListenData[i].albumData.genreName;
     article.dataset.releaseDate = wantToListenData[i].albumData.releaseDate;
 
     document.getElementById("albums").appendChild(article);
@@ -142,6 +159,59 @@ function buildWantToListenAlbums() {
 
 //!! SEARCHING !!//
 
+async function search() {
+  console.log("hello");
+  var albumParameters = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + accessToken,
+    },
+  };
+
+  const songContainer = document.getElementById("songs");
+  deleteAlbums("songs");
+
+  var albums = await fetch("https://api.spotify.com/v1/search?q=" + term + "&type=album", albumParameters)
+    .then((response) => response.json())
+    .then((data) => {
+      const artists = data.albums.items;
+      return artists.map((result) => {
+        // Now create Html Element
+        const article = document.createElement("article"),
+          artists = document.createElement("p"),
+          title = document.createElement("h4"),
+          img = document.createElement("img");
+
+        // Now put content
+
+        if (result.artists.length == 1) {
+          artists.innerHTML = result.artists[0].name;
+        } else {
+          stringOfArtists = "";
+          for (i = 0; i < result.artists.length; i++) {
+            stringOfArtists += result.artists[i].name + " & ";
+          }
+          artists.innerHTML = stringOfArtists.slice(0, -3);
+        }
+        title.innerHTML = result.name;
+        img.src = result.images[0].url;
+
+        const div = document.createElement("div");
+        div.appendChild(title);
+        div.appendChild(artists);
+
+        article.appendChild(img);
+        article.appendChild(div);
+
+        article.setAttribute("onclick", `popupFunc('${artists.innerHTML}','${title.innerHTML}', '${img.src}', '${result.release_date}')`);
+
+        songContainer.appendChild(article);
+      });
+    })
+    .catch((error) => console.log("Request failed:", error));
+}
+
 // search logic
 let term = "";
 const updateTerm = () => {
@@ -150,73 +220,7 @@ const updateTerm = () => {
   if (!term || term === "") {
     alert("Please enter a seach term");
   } else {
-    const url = `https://itunes.apple.com/search?term=${term}&enitity=album&limit=100`;
-    const songContainer = document.getElementById("songs");
-    deleteAlbums("songs");
-    fetch(url)
-      .then((Response) => Response.json())
-      .then((data) => {
-        // filter results
-        let allResults = data.results;
-        let filteredResults = [];
-        let albumIDs = [];
-        let results = [];
-
-        for (let i = 0; i < allResults.length; i++) {
-          if (allResults[i].kind == "song") {
-            filteredResults.push(allResults[i]);
-          }
-        }
-
-        for (let i = 0; i < filteredResults.length; i++) {
-          let unique = true;
-          if (albumIDs.length > 0) {
-            for (let j = 0; j < albumIDs.length; j++) {
-              if (filteredResults[i].collectionId == albumIDs[j]) {
-                unique = false;
-              }
-            }
-            if (unique) {
-              albumIDs.push(filteredResults[i].collectionId);
-              results.push(filteredResults[i]);
-            }
-          } else {
-            albumIDs.push(filteredResults[i].collectionId);
-            results.push(filteredResults[i]);
-          }
-        }
-
-        const artists = results;
-        return artists.map((result) => {
-          // Now create Html Element
-          const article = document.createElement("article"),
-            artists = document.createElement("p"),
-            title = document.createElement("h4"),
-            img = document.createElement("img");
-
-          // Now put content
-
-          if (result.collectionArtistName == undefined) {
-            artists.innerHTML = result.artistName;
-          } else {
-            artists.innerHTML = result.collectionArtistName;
-          }
-          title.innerHTML = result.collectionName;
-          img.src = result.artworkUrl100;
-
-          const div = document.createElement("div");
-          div.appendChild(title);
-          div.appendChild(artists);
-
-          article.appendChild(img);
-          article.appendChild(div);
-
-          article.setAttribute("onclick", `popupFunc('${artists.innerHTML}','${title.innerHTML}', '${img.src}', '${result.releaseDate}', '${result.primaryGenreName}')`);
-
-          songContainer.appendChild(article);
-        });
-      })
-      .catch((error) => console.log("Request failed:", error));
+    search();
   }
   resetPopup();
 };
@@ -232,7 +236,7 @@ document.getElementById("searchTerm").addEventListener("keypress", function (eve
 //!! POPUP !!//
 
 // bring up popup menu and change contents appropriately
-function popupFunc(artistName, albumTitle, albumCover, releaseDate, genreName) {
+function popupFunc(artistName, albumTitle, albumCover, releaseDate) {
   document.getElementById("listenedButton").style.backgroundColor = "#009fb7";
   document.getElementById("uniqueAlbumMessage").style.display = "none";
   deleteAlbums("songs");
@@ -265,7 +269,6 @@ function popupFunc(artistName, albumTitle, albumCover, releaseDate, genreName) {
     artistName: artistName,
     albumCover: albumCover,
     releaseDate: releaseDate,
-    genreName: genreName,
   };
 
   // visualize data in the popup
@@ -408,6 +411,31 @@ auth.onAuthStateChanged((user) => {
         });
     };
 
+    //change score from listened page
+    changeScoreButton.onclick = () => {
+      const { serverTimestamp } = firebase.firestore.FieldValue;
+      // delete from database
+      listenedRef
+        .doc(document.getElementById("moreInfoAlbumTitle").getAttribute("data-docId"))
+        .delete()
+        .then(() => {
+          document.getElementById("deleteButton").style.display = "inherit";
+          document.getElementById("changeScoreButton").style.display = "none";
+          document.getElementById("moreInfo").style.display = "none";
+          document.getElementById("moreInfoBackdrop").style.display = "none";
+        })
+        .catch((error) => {
+          console.error("Error removing document: ", error);
+        });
+      // add back to database
+      listenedRef.add({
+        albumData,
+        score: transferScore,
+        uid: user.uid,
+        createdAt: serverTimestamp(),
+      });
+    };
+
     // Query
     unsubscribe = listenedRef
       .where("uid", "==", user.uid)
@@ -501,18 +529,18 @@ ratingInput.onkeyup = () => {
 
 // show more info on albums in listened or want to listen
 
-function moreInfo(artistName, albumTitle, albumCover, releaseDate, genreName, score, createdAt, docId) {
+function moreInfo(artistName, albumTitle, albumCover, releaseDate, score, createdAt, docId) {
   albumData = {
     albumTitle: albumTitle,
     artistName: artistName,
     albumCover: albumCover,
     releaseDate: releaseDate,
-    genreName: genreName,
   };
 
   releaseDate = releaseDate.slice(0, 4);
   transferScore = 0;
   document.getElementById("transferButton").style.display = "none";
+  document.getElementById("changeScoreButton").style.display = "none";
   document.getElementById("deleteButton").style.display = "inherit";
   document.getElementById("moreInfo").style.display = "block";
   document.getElementById("moreInfoBackdrop").style.display = "block";
@@ -520,7 +548,6 @@ function moreInfo(artistName, albumTitle, albumCover, releaseDate, genreName, sc
   document.getElementById("moreInfoAlbumCover").src = albumCover;
   document.getElementById("moreInfoAlbumCover").height = document.getElementById("moreInfoAlbumCover").width;
   document.getElementById("moreInfoAlbumTitle").innerHTML = albumTitle;
-  document.getElementById("moreInfoGenreName").innerHTML = genreName;
   document.getElementById("moreInfoArtistName").innerHTML = artistName;
   document.getElementById("moreInfoReleaseDate").innerHTML = releaseDate;
   if (page == "wantToListen") {
@@ -540,6 +567,18 @@ function moreInfo(artistName, albumTitle, albumCover, releaseDate, genreName, sc
   } else if (page == "listened") {
     document.getElementById("moreInfoScore").innerHTML = score + "/10";
     document.getElementById("moreInfoScore").style.color = "inherit";
+    document.getElementById("moreInfoScore").onclick = () => {
+      transferScore = document.getElementById("moreInfoScore").innerHTML.slice(0, -3) - 1;
+      if (page == "listened") {
+        transferScore++;
+        if (transferScore == 11) {
+          transferScore = 0;
+        }
+        document.getElementById("changeScoreButton").style.display = "inherit";
+        document.getElementById("deleteButton").style.display = "none";
+        document.getElementById("moreInfoScore").innerHTML = transferScore + "/10";
+      }
+    };
   }
   document.getElementById("moreInfoAlbumTitle").setAttribute("data-docId", docId);
   lastScroll = window.scrollY;
@@ -549,6 +588,7 @@ function moreInfo(artistName, albumTitle, albumCover, releaseDate, genreName, sc
 document.getElementById("backButton").onclick = () => {
   document.getElementById("deleteButton").style.display = "inherit";
   document.getElementById("transferButton").style.display = "inherit";
+  document.getElementById("changeScoreButton").style.display = "inherit";
   document.getElementById("moreInfo").style.display = "none";
   document.getElementById("moreInfoBackdrop").style.display = "none";
   window.scrollTo(0, lastScroll);
@@ -575,7 +615,6 @@ function resetOrder() {
   titleReverse = false;
   artistReverse = false;
   ratingReverse = false;
-  genreReverse = false;
   releaseDateReverse = false;
 }
 
@@ -635,8 +674,7 @@ document.getElementById("titleMenuButton").onclick = () => {
       clickAttribute = document.getElementById("albums").children[i].attributes[0];
       article.setAttribute("onclick", document.getElementById("albums").children[i].attributes[0].value);
       article.dataset.artistName = document.getElementById("albums").children[i].attributes[1].value;
-      article.dataset.genre = document.getElementById("albums").children[i].attributes[2].value;
-      article.dataset.releaseDate = document.getElementById("albums").children[i].attributes[3].value;
+      article.dataset.releaseDate = document.getElementById("albums").children[i].attributes[2].value;
       allAlbums.push(article);
     }
     deleteAlbums("albums");
@@ -685,8 +723,7 @@ document.getElementById("artistMenuButton").onclick = () => {
       clickAttribute = document.getElementById("albums").children[i].attributes[0];
       article.setAttribute("onclick", document.getElementById("albums").children[i].attributes[0].value);
       article.dataset.artistName = document.getElementById("albums").children[i].attributes[1].value;
-      article.dataset.genre = document.getElementById("albums").children[i].attributes[2].value;
-      article.dataset.releaseDate = document.getElementById("albums").children[i].attributes[3].value;
+      article.dataset.releaseDate = document.getElementById("albums").children[i].attributes[2].value;
       allAlbums.push(article);
     }
     deleteAlbums("albums");
@@ -735,8 +772,7 @@ document.getElementById("ratingMenuButton").onclick = () => {
       clickAttribute = document.getElementById("albums").children[i].attributes[0];
       article.setAttribute("onclick", document.getElementById("albums").children[i].attributes[0].value);
       article.dataset.artistName = document.getElementById("albums").children[i].attributes[1].value;
-      article.dataset.genre = document.getElementById("albums").children[i].attributes[2].value;
-      article.dataset.releaseDate = document.getElementById("albums").children[i].attributes[3].value;
+      article.dataset.releaseDate = document.getElementById("albums").children[i].attributes[2].value;
       allAlbums.push(article);
     }
     deleteAlbums("albums");
@@ -763,56 +799,6 @@ document.getElementById("ratingMenuButton").onclick = () => {
   }
 };
 
-// click genre
-document.getElementById("genreMenuButton").onclick = () => {
-  if (genreReverse) {
-    deleteAlbums("albums");
-
-    reverseAlbums = sortedAlbums.reverse();
-    for (let i = 0; i < reverseAlbums.length; i++) {
-      document.getElementById("albums").appendChild(reverseAlbums[i]);
-    }
-    resetOrder();
-  } else {
-    resetOrder();
-    allAlbums = [];
-    sortedAlbums = [];
-    genres = [];
-    sortedGenres = [];
-    for (let i = 0; i < document.getElementById("albums").children.length; i++) {
-      article = document.createElement("article");
-      article.innerHTML = document.getElementById("albums").children[i].innerHTML;
-      clickAttribute = document.getElementById("albums").children[i].attributes[0];
-      article.setAttribute("onclick", document.getElementById("albums").children[i].attributes[0].value);
-      article.dataset.artistName = document.getElementById("albums").children[i].attributes[1].value;
-      article.dataset.genre = document.getElementById("albums").children[i].attributes[2].value;
-      article.dataset.releaseDate = document.getElementById("albums").children[i].attributes[3].value;
-      allAlbums.push(article);
-    }
-    deleteAlbums("albums");
-
-    for (let i = 0; i < allAlbums.length; i++) {
-      genre = allAlbums[i].dataset.genre;
-      genre = genre;
-      genres.push(genre);
-    }
-    sortedGenres = genres.sort();
-    while (sortedGenres.length > 0) {
-      for (let i = 0; i < allAlbums.length; i++) {
-        if (allAlbums[i].dataset.genre == sortedGenres[0]) {
-          sortedAlbums.push(allAlbums[i]);
-          sortedGenres.shift();
-        }
-      }
-    }
-    for (let i = 0; i < sortedAlbums.length; i++) {
-      document.getElementById("albums").appendChild(sortedAlbums[i]);
-    }
-
-    genreReverse = true;
-  }
-};
-
 // click releaseDate
 document.getElementById("releaseDateMenuButton").onclick = () => {
   if (releaseDateReverse) {
@@ -835,8 +821,7 @@ document.getElementById("releaseDateMenuButton").onclick = () => {
       clickAttribute = document.getElementById("albums").children[i].attributes[0];
       article.setAttribute("onclick", document.getElementById("albums").children[i].attributes[0].value);
       article.dataset.artistName = document.getElementById("albums").children[i].attributes[1].value;
-      article.dataset.genre = document.getElementById("albums").children[i].attributes[2].value;
-      article.dataset.releaseDate = document.getElementById("albums").children[i].attributes[3].value;
+      article.dataset.releaseDate = document.getElementById("albums").children[i].attributes[2].value;
       allAlbums.push(article);
     }
     deleteAlbums("albums");
