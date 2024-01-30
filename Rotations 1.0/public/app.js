@@ -160,7 +160,6 @@ function buildWantToListenAlbums() {
 //!! SEARCHING !!//
 
 async function search() {
-  console.log("hello");
   var albumParameters = {
     method: "GET",
     headers: {
@@ -381,7 +380,7 @@ auth.onAuthStateChanged((user) => {
       // add back to database
       listenedRef.add({
         albumData,
-        score: transferScore - 1,
+        score: transferScore,
         uid: user.uid,
         createdAt: serverTimestamp(),
       });
