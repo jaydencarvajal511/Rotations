@@ -90,7 +90,7 @@ function buildListenedAlbums() {
   reverseListenedOrder = [];
   deleteAlbums("albums");
   document.getElementById("albumsHeader").innerHTML = `Listened (${listenedData.length})`;
-  for (let i = 0; i < listenedData.length; i++) {
+  for (let i = listenedData.length - 1; i >= 0; i--) {
     // Now create Html Element
     const article = document.createElement("article"),
       showArtistName = document.createElement("p"),
@@ -117,8 +117,8 @@ function buildListenedAlbums() {
     article.dataset.releaseDate = listenedData[i].albumData.releaseDate;
 
     document.getElementById("albums").appendChild(article);
-    originalListenedOrder.push(article);
-    reverseListenedOrder.unshift(article);
+    originalListenedOrder.unshift(article);
+    reverseListenedOrder.push(article);
   }
 }
 
@@ -127,7 +127,7 @@ function buildWantToListenAlbums() {
   reverseListenedOrder = [];
   deleteAlbums("albums");
   document.getElementById("albumsHeader").innerHTML = `Want To Listen (${wantToListenData.length})`;
-  for (let i = 0; i < wantToListenData.length; i++) {
+  for (let i = wantToListenData.length - 1; i >= 0; i--) {
     // Now create Html Element
     const article = document.createElement("article"),
       showArtistName = document.createElement("p"),
@@ -152,14 +152,15 @@ function buildWantToListenAlbums() {
     article.dataset.releaseDate = wantToListenData[i].albumData.releaseDate;
 
     document.getElementById("albums").appendChild(article);
-    originalWantToListenOrder.push(article);
-    reverseWantToListenOrder.unshift(article);
+    originalWantToListenOrder.unshift(article);
+    reverseWantToListenOrder.push(article);
   }
 }
 
 //!! SEARCHING !!//
 
 async function search() {
+  console.log("hello");
   var albumParameters = {
     method: "GET",
     headers: {
@@ -320,6 +321,7 @@ auth.onAuthStateChanged((user) => {
           confirmButton.style.display = "block";
           document.getElementsByClassName("saveOption")[0].classList.add("submitBar");
           listenedButton.style.display = "none";
+          ("¿p´+0");
           wantToListenButton.style.display = "none";
           recommendButton.style.display = "none";
           database = "listened";
@@ -363,6 +365,7 @@ auth.onAuthStateChanged((user) => {
 
     // tranfer album from wantToListen to listened
     transferButton.onclick = () => {
+      transferScore = document.getElementById("transferScoreRange").value / 10;
       const { serverTimestamp } = firebase.firestore.FieldValue;
       // delete from database
       wantToListenRef
@@ -412,6 +415,8 @@ auth.onAuthStateChanged((user) => {
 
     //change score from listened page
     changeScoreButton.onclick = () => {
+      transferScore = document.getElementById("transferScoreRange").value / 10;
+
       const { serverTimestamp } = firebase.firestore.FieldValue;
       // delete from database
       listenedRef
@@ -537,12 +542,12 @@ function moreInfo(artistName, albumTitle, albumCover, releaseDate, score, create
   };
 
   releaseDate = releaseDate.slice(0, 4);
-  transferScore = 0;
   document.getElementById("transferButton").style.display = "none";
   document.getElementById("changeScoreButton").style.display = "none";
   document.getElementById("deleteButton").style.display = "inherit";
   document.getElementById("moreInfo").style.display = "block";
   document.getElementById("moreInfoBackdrop").style.display = "block";
+  document.getElementById("transferScoreRange").hidden = true;
 
   document.getElementById("moreInfoAlbumCover").src = albumCover;
   document.getElementById("moreInfoAlbumCover").height = document.getElementById("moreInfoAlbumCover").width;
@@ -553,29 +558,27 @@ function moreInfo(artistName, albumTitle, albumCover, releaseDate, score, create
     document.getElementById("moreInfoScore").innerHTML = "Listened?";
     document.getElementById("moreInfoScore").style.color = "#ce8cc0";
     document.getElementById("moreInfoScore").onclick = () => {
+      document.getElementById("transferScoreRange").hidden = false;
+    };
+    document.getElementById("transferScoreRange").oninput = () => {
       if (page == "wantToListen") {
-        transferScore++;
-        if (transferScore == 11) {
-          transferScore = 0;
-        }
         document.getElementById("transferButton").style.display = "inherit";
         document.getElementById("deleteButton").style.display = "none";
-        document.getElementById("moreInfoScore").innerHTML = transferScore + "/10";
+        document.getElementById("moreInfoScore").innerHTML = document.getElementById("transferScoreRange").value / 10 + "/10";
       }
     };
   } else if (page == "listened") {
     document.getElementById("moreInfoScore").innerHTML = score + "/10";
     document.getElementById("moreInfoScore").style.color = "inherit";
     document.getElementById("moreInfoScore").onclick = () => {
-      transferScore = document.getElementById("moreInfoScore").innerHTML.slice(0, -3) - 1;
+      document.getElementById("transferScoreRange").hidden = false;
+      document.getElementById("transferScoreRange").value = score * 10;
+    };
+    document.getElementById("transferScoreRange").oninput = () => {
       if (page == "listened") {
-        transferScore++;
-        if (transferScore == 11) {
-          transferScore = 0;
-        }
         document.getElementById("changeScoreButton").style.display = "inherit";
         document.getElementById("deleteButton").style.display = "none";
-        document.getElementById("moreInfoScore").innerHTML = transferScore + "/10";
+        document.getElementById("moreInfoScore").innerHTML = document.getElementById("transferScoreRange").value / 10 + "/10";
       }
     };
   }
