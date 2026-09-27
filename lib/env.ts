@@ -1,9 +1,11 @@
 import {
   parseEnv,
   publicEnvSchema,
-  serverEnvSchema,
+  spotifyEnvSchema,
+  supabaseAdminEnvSchema,
   type PublicEnv,
-  type ServerEnv,
+  type SpotifyEnv,
+  type SupabaseAdminEnv,
 } from "@/lib/schemas/env";
 
 export function getPublicEnv(): PublicEnv {
@@ -14,9 +16,16 @@ export function getPublicEnv(): PublicEnv {
   });
 }
 
-export function getServerEnv(): ServerEnv {
-  return parseEnv(serverEnvSchema, {
+export function getSpotifyEnv(): SpotifyEnv {
+  return parseEnv(spotifyEnvSchema, {
     SPOTIFY_CLIENT_ID: process.env.SPOTIFY_CLIENT_ID,
     SPOTIFY_CLIENT_SECRET: process.env.SPOTIFY_CLIENT_SECRET,
+  });
+}
+
+export function getSupabaseAdminEnv(): SupabaseAdminEnv {
+  return parseEnv(supabaseAdminEnvSchema, {
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
   });
 }

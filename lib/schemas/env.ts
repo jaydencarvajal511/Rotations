@@ -6,14 +6,21 @@ export const publicEnvSchema = z.object({
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
 });
 
-/** Server-only secrets. Never import the result into a client component. */
-export const serverEnvSchema = z.object({
+/** Server-only: Spotify catalog search credentials. */
+export const spotifyEnvSchema = z.object({
   SPOTIFY_CLIENT_ID: z.string().min(1),
   SPOTIFY_CLIENT_SECRET: z.string().min(1),
 });
 
+/** Server-only: bypasses RLS. Used solely for upserting cached album metadata. */
+export const supabaseAdminEnvSchema = z.object({
+  NEXT_PUBLIC_SUPABASE_URL: z.url(),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
+});
+
 export type PublicEnv = z.infer<typeof publicEnvSchema>;
-export type ServerEnv = z.infer<typeof serverEnvSchema>;
+export type SpotifyEnv = z.infer<typeof spotifyEnvSchema>;
+export type SupabaseAdminEnv = z.infer<typeof supabaseAdminEnvSchema>;
 
 export function parseEnv<T extends z.ZodType>(
   schema: T,
