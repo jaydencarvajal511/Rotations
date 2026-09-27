@@ -1,10 +1,12 @@
+@AGENTS.md
+
 # CLAUDE.md
 
 Instructions for Claude Code when working in this repository. Keep this file short — architecture and rationale live in `design.md`, not here.
 
 ## Project
 
-**Rotations** — a music album tracker. Users save albums they want to listen to, move them to "listened" once they have, rate/note them, and can browse Spotify search results to find albums to add.
+**Rotations** — a music album tracker. Users save albums they want to listen to, move them to "listened" once they have, sort/filter both lists, and search a catalog (Spotify, under the hood) to find albums to add.
 
 This is a from-scratch rewrite of a v1 built with vanilla HTML/CSS/JS + Firebase + Spotify Search API. v1 lives in `/legacy` for reference only — do not edit it, do not import from it.
 
@@ -13,10 +15,10 @@ This is a from-scratch rewrite of a v1 built with vanilla HTML/CSS/JS + Firebase
 - **Next.js (App Router) + TypeScript** — strict mode, no `any` without a `// eslint-disable` and a comment explaining why
 - **Tailwind CSS + shadcn/ui** — use shadcn primitives before writing custom components
 - **Supabase** — Postgres (schema + migrations in `/supabase/migrations`), Auth, Row Level Security
-- **Spotify Web API** — search + (later) OAuth for listening history import
+- **Spotify Web API** — catalog search only (album metadata). No Spotify login/OAuth, no listening-history import — see design.md
 - **Zod** — validate all external data at the boundary: Spotify API responses, Supabase query results used in forms, route handler inputs
 - **Vitest + React Testing Library** — unit/component tests
-- **Playwright** — e2e tests for critical flows (add album, move to listened, rate)
+- **Playwright** — e2e tests for critical flows (add album, move to listened, sort/filter)
 - **PWA** — installable, works well on mobile browsers (this is a target requirement, not a stretch feature — see design.md)
 - Deployed on **Vercel**
 
