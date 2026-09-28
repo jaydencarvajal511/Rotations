@@ -31,8 +31,11 @@ npm run typecheck    # tsc --noEmit
 npm run lint         # eslint
 npm run test         # vitest run
 npm run test:watch   # vitest watch mode
-npm run test:e2e     # playwright
+npm run test:e2e     # playwright (signed-out specs; signed-in specs skip)
+npm run test:e2e:local  # full playwright suite against local supabase (npx supabase start first)
 npm run db:migrate   # apply supabase migrations locally
+npm run db:test      # pgTAP RLS tests against local supabase
+npm run db:types     # regenerate lib/supabase/database.types.ts from local schema
 ```
 
 **Before considering any task done: run `typecheck`, `lint`, and `test`. All three must pass.** This is the verification loop — don't ask me to eyeball a diff that hasn't been checked.

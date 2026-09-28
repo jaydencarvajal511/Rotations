@@ -13,7 +13,8 @@
     "test:e2e": "playwright test",
     "db:migrate": "supabase migration up",
     "db:test": "supabase test db",
-    "db:types": "supabase gen types typescript --local > lib/supabase/database.types.ts"
+    "db:types": "supabase gen types typescript --local > lib/supabase/database.types.ts",
+    "test:e2e:local": "node scripts/e2e-local.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
