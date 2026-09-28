@@ -1,0 +1,28 @@
+{
+  "resultCount": 1,
+  "results": [
+    {
+      "wrapperType": "collection",
+      "collectionType": "Album",
+      "artistId": 13125609,
+      "collectionId": 1440856219,
+      "amgArtistId": 612371,
+      "artistName": "Amy Winehouse",
+      "collectionName": "Back to Black",
+      "collectionCensoredName": "Back to Black",
+      "artistViewUrl": "https://music.apple.com/us/artist/amy-winehouse/13125609?uo=4",
+      "collectionViewUrl": "https://music.apple.com/us/album/back-to-black/1440856219?uo=4",
+      "artworkUrl60": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/cf/3f/09/cf3f0994-980d-d8ed-088d-ae89af256b73/15UMGIM24224.rgb.jpg/60x60bb.jpg",
+      "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/cf/3f/09/cf3f0994-980d-d8ed-088d-ae89af256b73/15UMGIM24224.rgb.jpg/100x100bb.jpg",
+      "collectionPrice": 9.99,
+      "collectionExplicitness": "cleaned",
+      "contentAdvisoryRating": "Clean",
+      "trackCount": 11,
+      "copyright": "℗ 2015 Island Records, a division of Universal Music Operations Limited",
+      "country": "USA",
+      "currency": "USD",
+      "releaseDate": "2006-10-27T07:00:00Z",
+      "primaryGenreName": "R&B/Soul"
+    }
+  ]
+}
