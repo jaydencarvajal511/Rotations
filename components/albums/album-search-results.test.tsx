@@ -7,7 +7,7 @@ import type { AlbumSummary } from "@/lib/schemas/album";
 import { AlbumSearchResults } from "./album-search-results";
 
 const saveToWantToListen = vi.hoisted(() => vi.fn());
-vi.mock("@/app/search/actions", () => ({ saveToWantToListen }));
+vi.mock("@/lib/albums/actions", () => ({ saveToWantToListen }));
 
 const albums: AlbumSummary[] = [
   {
