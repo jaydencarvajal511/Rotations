@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest";
 import {
   parseEnv,
   publicEnvSchema,
-  spotifyEnvSchema,
   supabaseAdminEnvSchema,
 } from "./env";
 
@@ -25,19 +24,14 @@ describe("parseEnv", () => {
     ).toThrow(/NEXT_PUBLIC_SUPABASE_URL/);
   });
 
-  it("names every missing Spotify var in the error", () => {
-    expect(() => parseEnv(spotifyEnvSchema, {})).toThrow(
-      /SPOTIFY_CLIENT_ID[\s\S]*SPOTIFY_CLIENT_SECRET/,
-    );
-  });
 
   it("treats empty strings as missing", () => {
     expect(() =>
-      parseEnv(spotifyEnvSchema, {
-        SPOTIFY_CLIENT_ID: "",
-        SPOTIFY_CLIENT_SECRET: "secret",
+      parseEnv(supabaseAdminEnvSchema, {
+        NEXT_PUBLIC_SUPABASE_URL: "https://abc.supabase.co",
+        SUPABASE_SERVICE_ROLE_KEY: "",
       }),
-    ).toThrow(/SPOTIFY_CLIENT_ID/);
+    ).toThrow(/SUPABASE_SERVICE_ROLE_KEY/);
   });
 
   it("requires the service role key for the admin client", () => {

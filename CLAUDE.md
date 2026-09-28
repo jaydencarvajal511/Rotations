@@ -6,7 +6,7 @@ Instructions for Claude Code when working in this repository. Keep this file sho
 
 ## Project
 
-**Rotations** — a music album tracker. Users save albums they want to listen to, move them to "listened" once they have, sort/filter both lists, and search a catalog (Spotify, under the hood) to find albums to add.
+**Rotations** — a music album tracker. Users save albums they want to listen to, move them to "listened" once they have, sort/filter both lists, and search a catalog (Apple's iTunes Search API, under the hood) to find albums to add.
 
 This is a from-scratch rewrite of a v1 built with vanilla HTML/CSS/JS + Firebase + Spotify Search API. v1 lives in `/legacy` for reference only — do not edit it, do not import from it.
 
@@ -15,8 +15,8 @@ This is a from-scratch rewrite of a v1 built with vanilla HTML/CSS/JS + Firebase
 - **Next.js (App Router) + TypeScript** — strict mode, no `any` without a `// eslint-disable` and a comment explaining why
 - **Tailwind CSS + shadcn/ui** — use shadcn primitives before writing custom components
 - **Supabase** — Postgres (schema + migrations in `/supabase/migrations`), Auth, Row Level Security
-- **Spotify Web API** — catalog search only (album metadata). No Spotify login/OAuth, no listening-history import — see design.md
-- **Zod** — validate all external data at the boundary: Spotify API responses, Supabase query results used in forms, route handler inputs
+- **iTunes Search API** — catalog search only (album metadata), no API key. No streaming-service login/OAuth, no listening-history import. Replaced Spotify — see design.md
+- **Zod** — validate all external data at the boundary: iTunes API responses, Supabase query results used in forms, route handler inputs
 - **Vitest + React Testing Library** — unit/component tests
 - **Playwright** — e2e tests for critical flows (add album, move to listened, sort/filter)
 - **PWA** — installable, works well on mobile browsers (this is a target requirement, not a stretch feature — see design.md)
@@ -44,7 +44,7 @@ npm run db:migrate   # apply supabase migrations locally
 /components           # shared UI components (shadcn-based)
 /lib
   /supabase           # Supabase client setup, typed query helpers
-  /spotify            # Spotify API client
+  /itunes             # iTunes Search API client
   /schemas            # Zod schemas shared across the app
 /supabase/migrations  # SQL migrations — never edit an already-applied migration, add a new one
 /tests                # Playwright e2e specs
@@ -54,7 +54,7 @@ npm run db:migrate   # apply supabase migrations locally
 ## Conventions
 
 - Server data fetching goes through `/lib/supabase` query helpers — don't call `supabase.from(...)` directly inside components.
-- Every Spotify API response gets parsed through a Zod schema in `/lib/schemas` before it touches component state.
+- Every iTunes API response gets parsed through a Zod schema in `/lib/schemas` before it touches component state.
 - Prefer server components; only mark a component `"use client"` when it needs interactivity or browser APIs.
 - Mobile-first styling — this app needs to feel good on a phone screen before it needs to look good on desktop. Check responsive behavior at 375px width before calling a UI task done.
 - Conventional commits (`feat:`, `fix:`, `chore:`, `refactor:`) on every commit.
