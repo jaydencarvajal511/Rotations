@@ -20,8 +20,11 @@ export default defineConfig({
     { name: "desktop-chrome", use: { ...devices["Desktop Chrome"] } },
   ],
   webServer: {
-    command: `npm run dev -- --port ${PORT}`,
+    // Production build: matches what ships, and can run alongside a local
+    // `next dev` (Next 16 allows only one dev server per project)
+    command: `npm run build && npm run start -- --port ${PORT}`,
     url: baseURL,
     reuseExistingServer: !process.env.CI,
+    timeout: 180_000,
   },
 });
