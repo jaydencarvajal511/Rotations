@@ -3,8 +3,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    // Album artwork from the iTunes catalog
-    remotePatterns: [new URL("https://*.mzstatic.com/**")],
+    // Album artwork from the Deezer catalog
+    remotePatterns: [new URL("https://cdn-images.dzcdn.net/images/cover/**")],
   },
 };
 

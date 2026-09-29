@@ -2,7 +2,7 @@ import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { appleMusicAlbumUrl } from "@/lib/itunes/links";
+import { catalogAlbumUrl } from "@/lib/catalog/links";
 import type { AlbumSummary } from "@/lib/schemas/album";
 import { entryStatusSchema, listEntryRowSchema, type EntryStatus } from "@/lib/schemas/entry";
 
@@ -74,7 +74,7 @@ export async function listEntries(supabase: Client, status: EntryStatus): Promis
       artist: row.albums.artist,
       coverUrl: row.albums.cover_url,
       releaseDate: row.albums.release_date,
-      storeUrl: appleMusicAlbumUrl(row.albums.id),
+      storeUrl: catalogAlbumUrl(row.albums.id),
     },
   }));
 }

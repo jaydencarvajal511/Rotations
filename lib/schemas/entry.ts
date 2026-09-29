@@ -4,7 +4,7 @@ import { z } from "zod";
 export const entryStatusSchema = z.enum(["want_to_listen", "listened"]);
 export type EntryStatus = z.infer<typeof entryStatusSchema>;
 
-/** Catalog album IDs are numeric strings (iTunes collectionId). */
+/** Catalog album IDs are numeric strings (Deezer album id). */
 export const albumIdSchema = z.string().regex(/^\d{1,20}$/, "Invalid album id");
 
 export const entryIdSchema = z.uuid();

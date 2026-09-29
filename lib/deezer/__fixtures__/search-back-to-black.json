@@ -1,0 +1,93 @@
+{
+  "data": [
+    {
+      "id": 217795,
+      "title": "Back To Black",
+      "link": "https://www.deezer.com/album/217795",
+      "cover": "https://api.deezer.com/album/217795/image",
+      "cover_small": "https://cdn-images.dzcdn.net/images/cover/5772b495f0dcdf660d0fc88c4c38a3fa/56x56-000000-80-0-0.jpg",
+      "cover_medium": "https://cdn-images.dzcdn.net/images/cover/5772b495f0dcdf660d0fc88c4c38a3fa/250x250-000000-80-0-0.jpg",
+      "cover_big": "https://cdn-images.dzcdn.net/images/cover/5772b495f0dcdf660d0fc88c4c38a3fa/500x500-000000-80-0-0.jpg",
+      "cover_xl": "https://cdn-images.dzcdn.net/images/cover/5772b495f0dcdf660d0fc88c4c38a3fa/1000x1000-000000-80-0-0.jpg",
+      "md5_image": "5772b495f0dcdf660d0fc88c4c38a3fa",
+      "genre_id": 165,
+      "nb_tracks": 11,
+      "record_type": "album",
+      "tracklist": "https://api.deezer.com/album/217795/tracks",
+      "explicit_lyrics": true,
+      "artist": {
+        "id": 9052,
+        "name": "Amy Winehouse",
+        "link": "https://www.deezer.com/artist/9052",
+        "picture": "https://api.deezer.com/artist/9052/image",
+        "picture_small": "https://cdn-images.dzcdn.net/images/artist/0cacb43a576b031eb169cca27171c1f5/56x56-000000-80-0-0.jpg",
+        "picture_medium": "https://cdn-images.dzcdn.net/images/artist/0cacb43a576b031eb169cca27171c1f5/250x250-000000-80-0-0.jpg",
+        "picture_big": "https://cdn-images.dzcdn.net/images/artist/0cacb43a576b031eb169cca27171c1f5/500x500-000000-80-0-0.jpg",
+        "picture_xl": "https://cdn-images.dzcdn.net/images/artist/0cacb43a576b031eb169cca27171c1f5/1000x1000-000000-80-0-0.jpg",
+        "tracklist": "https://api.deezer.com/artist/9052/top?limit=50",
+        "type": "artist"
+      },
+      "type": "album"
+    },
+    {
+      "id": 6993387,
+      "title": "Back To Black (Deluxe Edition)",
+      "link": "https://www.deezer.com/album/6993387",
+      "cover": "https://api.deezer.com/album/6993387/image",
+      "cover_small": "https://cdn-images.dzcdn.net/images/cover/cc101c9745622ecda5d8454c1582a38f/56x56-000000-80-0-0.jpg",
+      "cover_medium": "https://cdn-images.dzcdn.net/images/cover/cc101c9745622ecda5d8454c1582a38f/250x250-000000-80-0-0.jpg",
+      "cover_big": "https://cdn-images.dzcdn.net/images/cover/cc101c9745622ecda5d8454c1582a38f/500x500-000000-80-0-0.jpg",
+      "cover_xl": "https://cdn-images.dzcdn.net/images/cover/cc101c9745622ecda5d8454c1582a38f/1000x1000-000000-80-0-0.jpg",
+      "md5_image": "cc101c9745622ecda5d8454c1582a38f",
+      "genre_id": 165,
+      "nb_tracks": 19,
+      "record_type": "album",
+      "tracklist": "https://api.deezer.com/album/6993387/tracks",
+      "explicit_lyrics": true,
+      "artist": {
+        "id": 9052,
+        "name": "Amy Winehouse",
+        "link": "https://www.deezer.com/artist/9052",
+        "picture": "https://api.deezer.com/artist/9052/image",
+        "picture_small": "https://cdn-images.dzcdn.net/images/artist/0cacb43a576b031eb169cca27171c1f5/56x56-000000-80-0-0.jpg",
+        "picture_medium": "https://cdn-images.dzcdn.net/images/artist/0cacb43a576b031eb169cca27171c1f5/250x250-000000-80-0-0.jpg",
+        "picture_big": "https://cdn-images.dzcdn.net/images/artist/0cacb43a576b031eb169cca27171c1f5/500x500-000000-80-0-0.jpg",
+        "picture_xl": "https://cdn-images.dzcdn.net/images/artist/0cacb43a576b031eb169cca27171c1f5/1000x1000-000000-80-0-0.jpg",
+        "tracklist": "https://api.deezer.com/artist/9052/top?limit=50",
+        "type": "artist"
+      },
+      "type": "album"
+    },
+    {
+      "id": 10818994,
+      "title": "Back To Black (Remixes & B Sides)",
+      "link": "https://www.deezer.com/album/10818994",
+      "cover": "https://api.deezer.com/album/10818994/image",
+      "cover_small": "https://cdn-images.dzcdn.net/images/cover/c69879d7e3cd7b8261418100d610664a/56x56-000000-80-0-0.jpg",
+      "cover_medium": "https://cdn-images.dzcdn.net/images/cover/c69879d7e3cd7b8261418100d610664a/250x250-000000-80-0-0.jpg",
+      "cover_big": "https://cdn-images.dzcdn.net/images/cover/c69879d7e3cd7b8261418100d610664a/500x500-000000-80-0-0.jpg",
+      "cover_xl": "https://cdn-images.dzcdn.net/images/cover/c69879d7e3cd7b8261418100d610664a/1000x1000-000000-80-0-0.jpg",
+      "md5_image": "c69879d7e3cd7b8261418100d610664a",
+      "genre_id": 165,
+      "nb_tracks": 5,
+      "record_type": "ep",
+      "tracklist": "https://api.deezer.com/album/10818994/tracks",
+      "explicit_lyrics": false,
+      "artist": {
+        "id": 9052,
+        "name": "Amy Winehouse",
+        "link": "https://www.deezer.com/artist/9052",
+        "picture": "https://api.deezer.com/artist/9052/image",
+        "picture_small": "https://cdn-images.dzcdn.net/images/artist/0cacb43a576b031eb169cca27171c1f5/56x56-000000-80-0-0.jpg",
+        "picture_medium": "https://cdn-images.dzcdn.net/images/artist/0cacb43a576b031eb169cca27171c1f5/250x250-000000-80-0-0.jpg",
+        "picture_big": "https://cdn-images.dzcdn.net/images/artist/0cacb43a576b031eb169cca27171c1f5/500x500-000000-80-0-0.jpg",
+        "picture_xl": "https://cdn-images.dzcdn.net/images/artist/0cacb43a576b031eb169cca27171c1f5/1000x1000-000000-80-0-0.jpg",
+        "tracklist": "https://api.deezer.com/artist/9052/top?limit=50",
+        "type": "artist"
+      },
+      "type": "album"
+    }
+  ],
+  "total": 105,
+  "next": "https://api.deezer.com/search/album?q=back%20to%20black&limit=3&index=3"
+}

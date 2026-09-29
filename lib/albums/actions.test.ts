@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { ItunesError } from "@/lib/itunes/client";
+import { CatalogError } from "@/lib/catalog";
 import type { AlbumSummary } from "@/lib/schemas/album";
 
-import { saveToWantToListen } from "./actions";
+import { getAlbumDetails, saveToWantToListen } from "./actions";
 
 const mocks = vi.hoisted(() => ({
   getClaims: vi.fn(),
@@ -17,8 +17,8 @@ vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => ({ auth: { getClaims: mocks.getClaims } }),
 }));
-vi.mock("@/lib/itunes/client", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("@/lib/itunes/client")>()),
+vi.mock("@/lib/catalog", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/catalog")>()),
   lookupAlbum: mocks.lookupAlbum,
 }));
 vi.mock("@/lib/supabase/albums", () => ({ upsertAlbum: mocks.upsertAlbum }));
@@ -88,11 +88,27 @@ describe("saveToWantToListen", () => {
     expect(mocks.addWantToListen).not.toHaveBeenCalled();
   });
 
-  it("returns a friendly error when iTunes is unavailable", async () => {
-    mocks.lookupAlbum.mockRejectedValue(new ItunesError("rate limited", 403));
+  it("returns a friendly error when the catalog is unavailable", async () => {
+    mocks.lookupAlbum.mockRejectedValue(new CatalogError("quota exceeded", 4));
     await expect(saveToWantToListen(album.id)).resolves.toMatchObject({
       status: "error",
       message: expect.stringMatching(/unavailable/),
     });
+  });
+});
+
+describe("getAlbumDetails", () => {
+  it("returns catalog details for a valid id", async () => {
+    await expect(getAlbumDetails(album.id)).resolves.toEqual(album);
+  });
+
+  it("returns null for an invalid id without calling the catalog", async () => {
+    await expect(getAlbumDetails("../x")).resolves.toBeNull();
+    expect(mocks.lookupAlbum).not.toHaveBeenCalled();
+  });
+
+  it("returns null when the catalog is unavailable", async () => {
+    mocks.lookupAlbum.mockRejectedValue(new CatalogError("quota exceeded", 4));
+    await expect(getAlbumDetails(album.id)).resolves.toBeNull();
   });
 });

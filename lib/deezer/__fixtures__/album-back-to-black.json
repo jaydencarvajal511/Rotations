@@ -1,0 +1,35 @@
+{
+  "id": 217795,
+  "title": "Back To Black",
+  "link": "https://www.deezer.com/album/217795",
+  "cover": "https://api.deezer.com/album/217795/image",
+  "cover_small": "https://cdn-images.dzcdn.net/images/cover/5772b495f0dcdf660d0fc88c4c38a3fa/56x56-000000-80-0-0.jpg",
+  "cover_medium": "https://cdn-images.dzcdn.net/images/cover/5772b495f0dcdf660d0fc88c4c38a3fa/250x250-000000-80-0-0.jpg",
+  "cover_big": "https://cdn-images.dzcdn.net/images/cover/5772b495f0dcdf660d0fc88c4c38a3fa/500x500-000000-80-0-0.jpg",
+  "cover_xl": "https://cdn-images.dzcdn.net/images/cover/5772b495f0dcdf660d0fc88c4c38a3fa/1000x1000-000000-80-0-0.jpg",
+  "release_date": "2006-10-30",
+  "record_type": "album",
+  "type": "album",
+  "artist": {
+    "id": 9052,
+    "name": "Amy Winehouse",
+    "picture": "https://api.deezer.com/artist/9052/image",
+    "picture_small": "https://cdn-images.dzcdn.net/images/artist/0cacb43a576b031eb169cca27171c1f5/56x56-000000-80-0-0.jpg",
+    "picture_medium": "https://cdn-images.dzcdn.net/images/artist/0cacb43a576b031eb169cca27171c1f5/250x250-000000-80-0-0.jpg",
+    "picture_big": "https://cdn-images.dzcdn.net/images/artist/0cacb43a576b031eb169cca27171c1f5/500x500-000000-80-0-0.jpg",
+    "picture_xl": "https://cdn-images.dzcdn.net/images/artist/0cacb43a576b031eb169cca27171c1f5/1000x1000-000000-80-0-0.jpg",
+    "tracklist": "https://api.deezer.com/artist/9052/top?limit=50",
+    "type": "artist"
+  },
+  "nb_tracks": 11,
+  "genres": {
+    "data": [
+      {
+        "id": 165,
+        "name": "R&B",
+        "picture": "https://api.deezer.com/genre/165/image",
+        "type": "genre"
+      }
+    ]
+  }
+}

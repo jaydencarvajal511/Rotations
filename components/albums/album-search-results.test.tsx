@@ -6,8 +6,11 @@ import type { AlbumSummary } from "@/lib/schemas/album";
 
 import { AlbumSearchResults } from "./album-search-results";
 
-const saveToWantToListen = vi.hoisted(() => vi.fn());
-vi.mock("@/lib/albums/actions", () => ({ saveToWantToListen }));
+const { saveToWantToListen, getAlbumDetails } = vi.hoisted(() => ({
+  saveToWantToListen: vi.fn(),
+  getAlbumDetails: vi.fn(),
+}));
+vi.mock("@/lib/albums/actions", () => ({ saveToWantToListen, getAlbumDetails }));
 
 const albums: AlbumSummary[] = [
   {
@@ -16,7 +19,7 @@ const albums: AlbumSummary[] = [
     artist: "Amy Winehouse",
     coverUrl: null,
     releaseDate: "2006-10-27",
-    storeUrl: "https://music.apple.com/us/album/1",
+    storeUrl: "https://www.deezer.com/album/1",
   },
   {
     id: "2",
@@ -30,6 +33,7 @@ const albums: AlbumSummary[] = [
 
 beforeEach(() => {
   saveToWantToListen.mockReset();
+  getAlbumDetails.mockReset().mockResolvedValue(null);
 });
 
 async function openAlbum(name: string) {
@@ -51,10 +55,24 @@ describe("AlbumSearchResults", () => {
     const { dialog } = await openAlbum("Back to Black");
     expect(within(dialog).getByRole("heading", { name: "Back to Black" })).toBeInTheDocument();
     expect(within(dialog).getByText("2006")).toBeInTheDocument();
-    expect(within(dialog).getByRole("link", { name: /apple music/i })).toHaveAttribute(
+    expect(within(dialog).getByRole("link", { name: /deezer/i })).toHaveAttribute(
       "href",
-      "https://music.apple.com/us/album/1",
+      "https://www.deezer.com/album/1",
     );
+  });
+
+  it("fetches the release year when search results lack it", async () => {
+    getAlbumDetails.mockResolvedValue({ ...albums[1], releaseDate: "2020-07-24" });
+    render(<AlbumSearchResults albums={albums} initialStatuses={{}} />);
+    const { dialog } = await openAlbum("folklore");
+    expect(await within(dialog).findByText("2020")).toBeInTheDocument();
+    expect(getAlbumDetails).toHaveBeenCalledWith("2");
+  });
+
+  it("doesn't refetch when the year is already known", async () => {
+    render(<AlbumSearchResults albums={albums} initialStatuses={{}} />);
+    await openAlbum("Back to Black");
+    expect(getAlbumDetails).not.toHaveBeenCalled();
   });
 
   it("hides the year and store link when unknown", async () => {

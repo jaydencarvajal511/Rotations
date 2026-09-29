@@ -15,14 +15,14 @@ Rotations is a personal music-listening tracker. A signed-in user maintains two 
 
 **Core flows:**
 
-1. **Find an album.** User searches a music catalog (Apple's iTunes Search API, for now) by album or artist name from a search bar. Results show cover art, album name, artist, and release year.
+1. **Find an album.** User searches a music catalog (Deezer's, for now) by album or artist name from a search bar. Results show cover art, album name, artist, and release year.
 2. **Add it to a list.** From a search result, the user adds the album directly to "Want to Listen." (There's no "add to Listened directly" in v1 — the intended path is you queue it up, then hear it, then move it.)
 3. **Move it once heard.** From the "Want to Listen" list, the user moves an album to "Listened." This is the core state transition the whole data model is built around.
 4. **Browse and sort.** Both lists support sorting (e.g., by date added, alphabetically, by release date) and a search/filter box to find an album already in one of the lists.
 
-**Important framing: this is Goodreads for music, not Spotify-for-tracking.** The iTunes Search API is used purely as a catalog/metadata source — searching for an album and pulling its title, artist, cover art, and release date. Nothing about this app reads or imports a user's actual listening history, playlists, or account data from any streaming service, and there's no streaming-service login/OAuth anywhere in this app. The user is always the one manually deciding an album counts as "listened," exactly like a Goodreads user manually marking a book as read — the catalog API is just a convenient way to look up metadata, not a data pipeline into the app.
+**Important framing: this is Goodreads for music, not Spotify-for-tracking.** Deezer's public API is used purely as a catalog/metadata source — searching for an album and pulling its title, artist, cover art, and release date. Nothing about this app reads or imports a user's actual listening history, playlists, or account data from any streaming service, and there's no streaming-service login/OAuth anywhere in this app. The user is always the one manually deciding an album counts as "listened," exactly like a Goodreads user manually marking a book as read — the catalog API is just a convenient way to look up metadata, not a data pipeline into the app.
 
-This also means **the user-facing experience shouldn't feel Apple-exclusive**, even though Apple's catalog is the data source under the hood. There's no Apple login, no "connect your account," and nothing in the UI implies you need Apple Music (or any streaming) account to get full use of the app — the user experience is streaming-service agnostic, and someone with no streaming subscription at all should be able to use every feature. Using iTunes' own album ID (`collectionId`) as the primary key in the `albums` table is fine — that's an implementation detail invisible to the user, not a UX decision.
+This also means **the user-facing experience shouldn't feel Deezer-exclusive**, even though Deezer's catalog is the data source under the hood. There's no Deezer login, no "connect your account," and nothing in the UI implies you need a Deezer (or any streaming) account to get full use of the app — the user experience is streaming-service agnostic, and someone with no streaming subscription at all should be able to use every feature. Using Deezer's own album ID as the primary key in the `albums` table is fine — that's an implementation detail invisible to the user, not a UX decision.
 
 That's the full scope of this rewrite. Ratings, notes, and a stats dashboard are ideas for later (see Future feature ideas below) but are explicitly not being built as part of getting the stack modernized — this phase is a like-for-like rebuild of v1's functionality.
 
@@ -53,8 +53,8 @@ That's the full scope of this rewrite. Ratings, notes, and a stats dashboard are
 | Framework | Next.js (App Router), TypeScript | Server components, file routing, easy Vercel deploy, strong Claude Code fluency |
 | Styling | Tailwind CSS + shadcn/ui | Fast to build, consistent design system, avoids hand-rolled CSS |
 | Backend/DB | Supabase (Postgres + Auth + RLS) | Chosen over staying on Firebase specifically for the SQL/relational-modeling and RLS experience — more transferable to general backend roles than Firestore's NoSQL model |
-| External API | iTunes Search API (catalog search only) | Used only to look up album metadata (title, artist, cover, release date) — no API key, no user auth, no personal listening data. This is a backend implementation detail; the user-facing experience stays streaming-service agnostic. Replaced Spotify's Web API — see "Catalog source decision" below |
-| Validation | Zod | All external data (iTunes responses, form input) validated at the boundary |
+| External API | Deezer API (catalog search only) | Used only to look up album metadata (title, artist, cover, release date) — no API key, no user auth, no personal listening data. This is a backend implementation detail; the user-facing experience stays streaming-service agnostic. Replaced Spotify's Web API, then the iTunes Search API — see "Catalog source decision" below |
+| Validation | Zod | All external data (catalog responses, form input) validated at the boundary |
 | Testing | Vitest + React Testing Library, Playwright | Unit/component + e2e coverage on the core flows |
 | PWA | `next-pwa` (or `@ducanh2912/next-pwa` if the former lags Next.js versions) | Installable, offline app shell, good mobile feel without native app complexity |
 | Hosting | Vercel | Native Next.js support, trivial preview deployments |
@@ -71,7 +71,7 @@ profiles (
 
 -- albums: cached catalog album metadata so we're not re-fetching on every render
 albums (
-  id text primary key,          -- iTunes collectionId; using their ID directly is an implementation
+  id text primary key,          -- Deezer album id; using their ID directly is an implementation
                                  -- detail and doesn't imply anything to the user (see note below)
   name text not null,
   artist text not null,
@@ -101,7 +101,7 @@ For this rewrite, UI/UX decisions should follow the original v1 design rather th
 ## Scope for this phase
 
 This rewrite is v1 parity on the new stack. Full stop. Nothing below is new functionality:
-- Album search via Apple's iTunes catalog (metadata lookup only — no auth, no personal data)
+- Album search via Deezer's catalog (metadata lookup only — no auth, no personal data)
 - Add to "want to listen"
 - Move to "listened"
 - Sort/filter both lists
@@ -112,18 +112,31 @@ This rewrite is v1 parity on the new stack. Full stop. Nothing below is new func
 Parked here so they don't get lost, not because they're planned. Once the rewrite is working and deployed, these get brainstormed and prioritized properly before any get built:
 - Star ratings + text notes per listened album
 - Stats dashboard: albums per month, top artists/genres, current streak
-- Supporting additional catalog sources beyond iTunes (e.g. MusicBrainz, Discogs), or fully manual album entry for anything not in a catalog — not needed now, but if pursued later would mean revisiting the `albums` schema to support more than one source
+- Supporting additional catalog sources beyond Deezer (e.g. MusicBrainz, Discogs), or fully manual album entry for anything not in a catalog — not needed now, but if pursued later would mean revisiting the `albums` schema to support more than one source
 - Public shareable profile / "year in rotation" recap page
 - Recommendations based on listened albums
 
 ## Catalog source decision
 
-v1 used Spotify's Web API (client-credentials flow). In February 2026 Spotify began requiring the owner of any development-mode app to hold an active Premium subscription (effective March 9, 2026 for existing apps), capped search at 10 results per request, and removed batch album lookups. Rather than tie the app to a paid subscription, the rewrite uses Apple's iTunes Search API:
+v1 used Spotify's Web API (client-credentials flow). In February 2026 Spotify began requiring the owner of any development-mode app to hold an active Premium subscription (effective March 9, 2026 for existing apps), capped search at 10 results per request, and removed batch album lookups. Rather than tie the app to a paid subscription, the rewrite first moved to Apple's iTunes Search API, then to **Deezer's public API**. Before switching, the same queries were run against iTunes, MusicBrainz, and Deezer:
 
-- No API key or secret, so there's nothing to leak or rotate
-- ~20 requests/minute rate limit — search and lookup responses are cached server-side (Apple sends `max-age=86400` and encourages caching)
-- Apple's terms allow album art "only to promote store content" and "proximate to a store badge", so the album detail view links to the album on Apple Music. That link is optional for the user — it doesn't imply an account is needed.
-- The `albums` table was still empty when this switched, so no data migration was needed; `albums.id` is `text` and now holds the iTunes `collectionId`. (The initial migration's SQL comment still says "Spotify album ID" — applied migrations aren't edited.)
+| | iTunes | MusicBrainz | Deezer |
+|---|---|---|---|
+| Title search ("folklore", "igor", "back to black") | 2 of 3 found near the top | 0 of 3 without extra filters — no popularity ranking | 3 of 3 ranked first |
+| Artist-name search ("radiohead") | not tested | not tested | the artist's albums, ranked |
+| Covers | fast | Cover Art Archive: ~1.5–1.9s each, slow failures | fast, consistent up to 1000px |
+| Rate limit | ~20 req/min | 1 req/s per IP (503 when exceeded) | not documented; ~50 req/5s is commonly cited |
+| Terms | art only "proximate to a store badge" | open metadata; art rights unstated | **non-commercial use only** |
+
+Deezer was chosen for search quality. Consequences:
+
+- No API key or secret, so there's nothing to leak or rotate.
+- **Non-commercial only.** Deezer's terms limit use "strictly … for a non-commercial purpose." Monetizing Rotations (ads, paid tier) would mean switching catalogs again; iTunes permits commercial use.
+- Deezer returns errors as HTTP 200 with an `error` body (e.g. code 4 = quota, 800 = not found), so the client checks the body, not just the status.
+- Search results omit release dates; the search detail view fetches the album endpoint for the year, and saving always re-fetches full details server-side.
+- Responses are cached for a day. The UI credits "Album data from Deezer" and links albums to deezer.com; Deezer's trademark guidelines govern any logo use.
+- Callers import the catalog from `lib/catalog`, never from a provider module, so a future switch changes only that re-export.
+- The `albums` table was still empty at both switches, so no data migration was needed; `albums.id` is `text` and now holds the Deezer album id. (The initial migration's SQL comment still says "Spotify album ID" — applied migrations aren't edited.)
 
 ## Migration from v1
 

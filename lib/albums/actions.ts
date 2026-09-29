@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 
-import { ItunesError, lookupAlbum } from "@/lib/itunes/client";
+import { CatalogError, lookupAlbum } from "@/lib/catalog";
+import type { AlbumSummary } from "@/lib/schemas/album";
 import { albumIdSchema } from "@/lib/schemas/entry";
 import { upsertAlbum } from "@/lib/supabase/albums";
 import { addWantToListen, getEntryStatuses } from "@/lib/supabase/entries";
@@ -39,7 +40,7 @@ export async function saveToWantToListen(albumId: unknown): Promise<SaveAlbumRes
   try {
     album = await lookupAlbum(id);
   } catch (error) {
-    if (error instanceof ItunesError) {
+    if (error instanceof CatalogError) {
       return { status: "error", message: "Album search is unavailable right now. Try again in a minute." };
     }
     throw error;
@@ -53,4 +54,19 @@ export async function saveToWantToListen(albumId: unknown): Promise<SaveAlbumRes
 
   revalidatePath("/");
   return result.status === "added" ? { status: "added" } : { status: "already_saved" };
+}
+
+/**
+ * Full catalog details for the search detail view. Search results omit the
+ * release date, so the dialog fetches this on open. Responses are cached.
+ */
+export async function getAlbumDetails(albumId: unknown): Promise<AlbumSummary | null> {
+  const parsedId = albumIdSchema.safeParse(albumId);
+  if (!parsedId.success) return null;
+  try {
+    return await lookupAlbum(parsedId.data);
+  } catch (error) {
+    if (error instanceof CatalogError) return null;
+    throw error;
+  }
 }

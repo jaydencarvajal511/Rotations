@@ -1,6 +1,6 @@
 import { expect, test } from "./fixtures";
 
-// Fake ids outside iTunes' numeric range so they can't collide with real cached albums
+// Fake ids far beyond Deezer's id range so they can't collide with real cached albums
 const albums = [
   { id: "900000000000000001", name: "Back to Black", artist: "Amy Winehouse", release_date: "2006-10-27" },
   { id: "900000000000000002", name: "folklore", artist: "Taylor Swift", release_date: "2020-07-24" },

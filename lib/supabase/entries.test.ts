@@ -86,13 +86,13 @@ const row = {
     id: "1440856219",
     name: "Back to Black",
     artist: "Amy Winehouse",
-    cover_url: "https://is1-ssl.mzstatic.com/x/600x600bb.jpg",
+    cover_url: "https://cdn-images.dzcdn.net/images/cover/abc/1000x1000-000000-80-0-0.jpg",
     release_date: "2006-10-27",
   },
 };
 
 describe("listEntries", () => {
-  it("maps joined rows to entries with an Apple Music link", async () => {
+  it("maps joined rows to entries with a catalog link", async () => {
     const { client, builder } = fakeClient({ data: [row], error: null });
     const [entry] = await listEntries(client, "want_to_listen");
     expect(builder.eq).toHaveBeenCalledWith("status", "want_to_listen");
@@ -107,7 +107,7 @@ describe("listEntries", () => {
         artist: "Amy Winehouse",
         coverUrl: row.albums.cover_url,
         releaseDate: "2006-10-27",
-        storeUrl: "https://music.apple.com/album/1440856219",
+        storeUrl: "https://www.deezer.com/album/1440856219",
       },
     });
   });

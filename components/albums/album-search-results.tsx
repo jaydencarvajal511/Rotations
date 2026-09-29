@@ -1,9 +1,9 @@
 "use client";
 
 import { Check, FolderPlus } from "lucide-react";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 
-import { saveToWantToListen, type SaveAlbumResult } from "@/lib/albums/actions";
+import { getAlbumDetails, saveToWantToListen, type SaveAlbumResult } from "@/lib/albums/actions";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import type { AlbumSummary } from "@/lib/schemas/album";
@@ -61,7 +61,20 @@ function AlbumDetail({
 }) {
   const [pending, startTransition] = useTransition();
   const [result, setResult] = useState<SaveAlbumResult | null>(null);
+  const [releaseDate, setReleaseDate] = useState(album.releaseDate);
   const inRotation = status !== undefined;
+
+  // Search results don't include release dates; fetch them for the header
+  useEffect(() => {
+    if (album.releaseDate) return;
+    let cancelled = false;
+    getAlbumDetails(album.id).then((details) => {
+      if (!cancelled && details?.releaseDate) setReleaseDate(details.releaseDate);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [album.id, album.releaseDate]);
 
   function save() {
     startTransition(async () => {
@@ -73,7 +86,7 @@ function AlbumDetail({
 
   return (
     <DialogContent className="gap-5">
-      <AlbumDetailHeader album={album} />
+      <AlbumDetailHeader album={{ ...album, releaseDate }} />
 
       <div className="flex flex-col items-center gap-3">
         {result?.status === "added" ? (

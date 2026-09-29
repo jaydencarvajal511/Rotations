@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 
 import { AlbumSearchResults } from "@/components/albums/album-search-results";
 import { Input } from "@/components/ui/input";
-import { ItunesError, MAX_TERM_LENGTH, searchAlbums } from "@/lib/itunes/client";
+import { CatalogError, MAX_TERM_LENGTH, searchAlbums } from "@/lib/catalog";
+import { CATALOG_NAME } from "@/lib/catalog/links";
 import type { AlbumSummary } from "@/lib/schemas/album";
 import { getEntryStatuses } from "@/lib/supabase/entries";
 import { createClient } from "@/lib/supabase/server";
@@ -43,6 +44,8 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
       </form>
 
       {term ? <Results term={term} /> : <EmptyPrompt />}
+
+      <p className="text-center text-xs text-muted-foreground">Album data from {CATALOG_NAME}</p>
     </main>
   );
 }
@@ -61,7 +64,7 @@ async function Results({ term }: { term: string }) {
   try {
     albums = await searchAlbums(term);
   } catch (error) {
-    if (!(error instanceof ItunesError)) throw error;
+    if (!(error instanceof CatalogError)) throw error;
     return (
       <p role="alert" className="text-center text-muted-foreground">
         Album search is unavailable right now. Try again in a minute.

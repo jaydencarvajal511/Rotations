@@ -1,6 +1,7 @@
 import { ExternalLink } from "lucide-react";
 
 import { DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { CATALOG_NAME } from "@/lib/catalog/links";
 import type { AlbumSummary } from "@/lib/schemas/album";
 
 import { AlbumCover } from "./album-cover";
@@ -31,7 +32,7 @@ export function AlbumDetailHeader({ album }: { album: AlbumSummary }) {
   );
 }
 
-/** Apple's terms require a store link near album art from their catalog. */
+/** Links the album back to the catalog it came from. */
 export function StoreLink({ url }: { url: string | null }) {
   if (!url) return null;
   return (
@@ -41,7 +42,7 @@ export function StoreLink({ url }: { url: string | null }) {
       rel="noopener noreferrer"
       className="flex items-center gap-1 text-xs text-muted-foreground underline-offset-4 hover:underline"
     >
-      View on Apple Music <ExternalLink aria-hidden className="size-3" />
+      View on {CATALOG_NAME} <ExternalLink aria-hidden className="size-3" />
     </a>
   );
 }
