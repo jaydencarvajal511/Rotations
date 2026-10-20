@@ -6,11 +6,11 @@ import type { AlbumSummary } from "@/lib/schemas/album";
 
 import { AlbumSearchResults } from "./album-search-results";
 
-const { saveToWantToListen, getAlbumDetails } = vi.hoisted(() => ({
-  saveToWantToListen: vi.fn(),
+const { saveAlbum, getAlbumDetails } = vi.hoisted(() => ({
+  saveAlbum: vi.fn(),
   getAlbumDetails: vi.fn(),
 }));
-vi.mock("@/lib/albums/actions", () => ({ saveToWantToListen, getAlbumDetails }));
+vi.mock("@/lib/albums/actions", () => ({ saveAlbum, getAlbumDetails }));
 
 const albums: AlbumSummary[] = [
   {
@@ -32,7 +32,7 @@ const albums: AlbumSummary[] = [
 ];
 
 beforeEach(() => {
-  saveToWantToListen.mockReset();
+  saveAlbum.mockReset();
   getAlbumDetails.mockReset().mockResolvedValue(null);
 });
 
@@ -90,21 +90,37 @@ describe("AlbumSearchResults", () => {
   });
 
   it("saves and then remembers the album is in rotation", async () => {
-    saveToWantToListen.mockResolvedValue({ status: "added" });
+    saveAlbum.mockResolvedValue({ status: "added" });
     render(<AlbumSearchResults albums={albums} initialStatuses={{}} />);
     const { user, dialog } = await openAlbum("Back to Black");
 
     await user.click(within(dialog).getByRole("button", { name: /add to want to listen/i }));
     expect(await within(dialog).findByText("Saved to Want to Listen")).toBeInTheDocument();
-    expect(saveToWantToListen).toHaveBeenCalledWith("1");
+    expect(saveAlbum).toHaveBeenCalledWith("1", "want_to_listen");
 
     await user.keyboard("{Escape}");
     const reopened = await openAlbum("Back to Black");
     expect(within(reopened.dialog).getByText("This album is already in rotation!")).toBeInTheDocument();
   });
 
+  it("can add straight to Listened", async () => {
+    saveAlbum.mockResolvedValue({ status: "added" });
+    render(<AlbumSearchResults albums={albums} initialStatuses={{}} />);
+    const { user, dialog } = await openAlbum("Back to Black");
+
+    await user.click(within(dialog).getByRole("button", { name: /add to listened/i }));
+    expect(await within(dialog).findByText("Saved to Listened")).toBeInTheDocument();
+    expect(saveAlbum).toHaveBeenCalledWith("1", "listened");
+  });
+
+  it("marks albums already in a list instead of offering either add", async () => {
+    render(<AlbumSearchResults albums={albums} initialStatuses={{ "1": "want_to_listen" }} />);
+    const { dialog } = await openAlbum("Back to Black");
+    expect(within(dialog).queryByRole("button", { name: /add to/i })).not.toBeInTheDocument();
+  });
+
   it("shows the error and keeps the add button on failure", async () => {
-    saveToWantToListen.mockResolvedValue({ status: "error", message: "Please sign in again." });
+    saveAlbum.mockResolvedValue({ status: "error", message: "Please sign in again." });
     render(<AlbumSearchResults albums={albums} initialStatuses={{}} />);
     const { user, dialog } = await openAlbum("Back to Black");
 

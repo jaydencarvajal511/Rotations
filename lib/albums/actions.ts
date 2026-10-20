@@ -4,9 +4,9 @@ import { revalidatePath } from "next/cache";
 
 import { CatalogError, lookupAlbum } from "@/lib/catalog";
 import type { AlbumSummary } from "@/lib/schemas/album";
-import { albumIdSchema } from "@/lib/schemas/entry";
+import { albumIdSchema, entryStatusSchema } from "@/lib/schemas/entry";
 import { upsertAlbum } from "@/lib/supabase/albums";
-import { addWantToListen, getEntryStatuses } from "@/lib/supabase/entries";
+import { addEntry, getEntryStatuses } from "@/lib/supabase/entries";
 import { createClient } from "@/lib/supabase/server";
 
 export type SaveAlbumResult =
@@ -14,17 +14,24 @@ export type SaveAlbumResult =
   | { status: "already_saved" }
   | { status: "error"; message: string };
 
+const LIST_PATHS = { want_to_listen: "/want-to-listen", listened: "/listened" } as const;
+
 /**
- * Adds an album to the user's Want to Listen list. Takes only the album id:
+ * Adds an album to one of the user's lists. Takes only the album id:
  * metadata is re-fetched from the catalog so users can't write arbitrary
  * data into the shared albums cache.
  */
-export async function saveToWantToListen(albumId: unknown): Promise<SaveAlbumResult> {
+export async function saveAlbum(albumId: unknown, list: unknown): Promise<SaveAlbumResult> {
   const parsedId = albumIdSchema.safeParse(albumId);
   if (!parsedId.success) {
     return { status: "error", message: "That album couldn't be found." };
   }
+  const parsedList = entryStatusSchema.safeParse(list);
+  if (!parsedList.success) {
+    return { status: "error", message: "That list doesn't exist." };
+  }
   const id = parsedId.data;
+  const status = parsedList.data;
 
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getClaims();
@@ -50,9 +57,9 @@ export async function saveToWantToListen(albumId: unknown): Promise<SaveAlbumRes
   }
 
   await upsertAlbum(album);
-  const result = await addWantToListen(supabase, userId, id);
+  const result = await addEntry(supabase, userId, id, status);
 
-  revalidatePath("/");
+  revalidatePath(LIST_PATHS[status]);
   return result.status === "added" ? { status: "added" } : { status: "already_saved" };
 }
 

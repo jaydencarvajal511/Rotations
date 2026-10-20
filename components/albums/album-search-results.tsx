@@ -1,9 +1,9 @@
 "use client";
 
-import { Check, FolderPlus } from "lucide-react";
+import { Check, FolderPlus, Headphones } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
 
-import { getAlbumDetails, saveToWantToListen, type SaveAlbumResult } from "@/lib/albums/actions";
+import { getAlbumDetails, saveAlbum, type SaveAlbumResult } from "@/lib/albums/actions";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import type { AlbumSummary } from "@/lib/schemas/album";
@@ -42,7 +42,7 @@ export function AlbumSearchResults({ albums, initialStatuses }: Props) {
             key={selected.id}
             album={selected}
             status={statuses[selected.id]}
-            onSaved={() => setStatuses((s) => ({ ...s, [selected.id]: "want_to_listen" }))}
+            onSaved={(list) => setStatuses((s) => ({ ...s, [selected.id]: list }))}
           />
         ) : null}
       </Dialog>
@@ -57,10 +57,11 @@ function AlbumDetail({
 }: {
   album: AlbumSummary;
   status: EntryStatus | undefined;
-  onSaved: () => void;
+  onSaved: (list: EntryStatus) => void;
 }) {
   const [pending, startTransition] = useTransition();
   const [result, setResult] = useState<SaveAlbumResult | null>(null);
+  const [savingTo, setSavingTo] = useState<EntryStatus | null>(null);
   const [releaseDate, setReleaseDate] = useState(album.releaseDate);
   const inRotation = status !== undefined;
 
@@ -76,11 +77,12 @@ function AlbumDetail({
     };
   }, [album.id, album.releaseDate]);
 
-  function save() {
+  function save(list: EntryStatus) {
+    setSavingTo(list);
     startTransition(async () => {
-      const res = await saveToWantToListen(album.id);
+      const res = await saveAlbum(album.id, list);
       setResult(res);
-      if (res.status !== "error") onSaved();
+      if (res.status !== "error") onSaved(list);
     });
   }
 
@@ -91,17 +93,28 @@ function AlbumDetail({
       <div className="flex flex-col items-center gap-3">
         {result?.status === "added" ? (
           <p role="status" className="flex items-center gap-2 font-medium">
-            <Check aria-hidden className="size-4" /> Saved to Want to Listen
+            <Check aria-hidden className="size-4" /> {savingTo === "listened" ? "Saved to Listened" : "Saved to Want to Listen"}
           </p>
         ) : inRotation ? (
           <p role="status" className="text-center font-medium text-destructive">
             This album is already in rotation!
           </p>
         ) : (
-          <Button onClick={save} disabled={pending} size="lg" className="w-full">
-            <FolderPlus aria-hidden />
-            {pending ? "Saving…" : "Add to Want to Listen"}
-          </Button>
+          <div className="flex w-full flex-col gap-2">
+            <Button onClick={() => save("want_to_listen")} disabled={pending} size="lg">
+              <FolderPlus aria-hidden />
+              {pending && savingTo === "want_to_listen" ? "Saving…" : "Add to Want to Listen"}
+            </Button>
+            <Button
+              onClick={() => save("listened")}
+              disabled={pending}
+              size="lg"
+              variant="outline"
+            >
+              <Headphones aria-hidden />
+              {pending && savingTo === "listened" ? "Saving…" : "Add to Listened"}
+            </Button>
+          </div>
         )}
 
         {result?.status === "error" ? (

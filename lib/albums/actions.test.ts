@@ -3,17 +3,18 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { CatalogError } from "@/lib/catalog";
 import type { AlbumSummary } from "@/lib/schemas/album";
 
-import { getAlbumDetails, saveToWantToListen } from "./actions";
+import { getAlbumDetails, saveAlbum } from "./actions";
 
 const mocks = vi.hoisted(() => ({
   getClaims: vi.fn(),
   lookupAlbum: vi.fn(),
   upsertAlbum: vi.fn(),
   getEntryStatuses: vi.fn(),
-  addWantToListen: vi.fn(),
+  addEntry: vi.fn(),
+  revalidatePath: vi.fn(),
 }));
 
-vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
+vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }));
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => ({ auth: { getClaims: mocks.getClaims } }),
 }));
@@ -24,7 +25,7 @@ vi.mock("@/lib/catalog", async (importOriginal) => ({
 vi.mock("@/lib/supabase/albums", () => ({ upsertAlbum: mocks.upsertAlbum }));
 vi.mock("@/lib/supabase/entries", () => ({
   getEntryStatuses: mocks.getEntryStatuses,
-  addWantToListen: mocks.addWantToListen,
+  addEntry: mocks.addEntry,
 }));
 
 const album: AlbumSummary = {
@@ -41,21 +42,31 @@ beforeEach(() => {
   mocks.getClaims.mockResolvedValue({ data: { claims: { sub: "user-1" } } });
   mocks.getEntryStatuses.mockResolvedValue({});
   mocks.lookupAlbum.mockResolvedValue(album);
-  mocks.addWantToListen.mockResolvedValue({ status: "added" });
+  mocks.addEntry.mockResolvedValue({ status: "added" });
 });
 
-describe("saveToWantToListen", () => {
-  it("caches catalog metadata and adds the entry for the signed-in user", async () => {
-    await expect(saveToWantToListen(album.id)).resolves.toEqual({ status: "added" });
+describe("saveAlbum", () => {
+  it.each([
+    ["want_to_listen", "/want-to-listen"],
+    ["listened", "/listened"],
+  ] as const)("caches catalog metadata and adds the entry to %s", async (list, path) => {
+    await expect(saveAlbum(album.id, list)).resolves.toEqual({ status: "added" });
     expect(mocks.lookupAlbum).toHaveBeenCalledWith(album.id);
     expect(mocks.upsertAlbum).toHaveBeenCalledWith(album);
-    expect(mocks.addWantToListen).toHaveBeenCalledWith(expect.anything(), "user-1", album.id);
+    expect(mocks.addEntry).toHaveBeenCalledWith(expect.anything(), "user-1", album.id, list);
+    expect(mocks.revalidatePath).toHaveBeenCalledWith(path);
+  });
+
+  it.each(["", "LISTENED", "favorites", null])("rejects invalid list %j before touching anything", async (list) => {
+    await expect(saveAlbum(album.id, list)).resolves.toMatchObject({ status: "error" });
+    expect(mocks.getClaims).not.toHaveBeenCalled();
+    expect(mocks.upsertAlbum).not.toHaveBeenCalled();
   });
 
   it.each([123, "", "abc", "1; drop table albums", { id: "1" }, null])(
     "rejects invalid id %j before touching anything",
     async (id) => {
-      await expect(saveToWantToListen(id)).resolves.toMatchObject({ status: "error" });
+      await expect(saveAlbum(id, "want_to_listen")).resolves.toMatchObject({ status: "error" });
       expect(mocks.getClaims).not.toHaveBeenCalled();
       expect(mocks.upsertAlbum).not.toHaveBeenCalled();
     },
@@ -63,7 +74,7 @@ describe("saveToWantToListen", () => {
 
   it("refuses when signed out", async () => {
     mocks.getClaims.mockResolvedValue({ data: null });
-    await expect(saveToWantToListen(album.id)).resolves.toEqual({
+    await expect(saveAlbum(album.id, "want_to_listen")).resolves.toEqual({
       status: "error",
       message: "Please sign in again.",
     });
@@ -72,25 +83,25 @@ describe("saveToWantToListen", () => {
 
   it("short-circuits when the album is already in a list", async () => {
     mocks.getEntryStatuses.mockResolvedValue({ [album.id]: "listened" });
-    await expect(saveToWantToListen(album.id)).resolves.toEqual({ status: "already_saved" });
+    await expect(saveAlbum(album.id, "want_to_listen")).resolves.toEqual({ status: "already_saved" });
     expect(mocks.lookupAlbum).not.toHaveBeenCalled();
   });
 
   it("reports already saved when a concurrent insert wins the race", async () => {
-    mocks.addWantToListen.mockResolvedValue({ status: "exists" });
-    await expect(saveToWantToListen(album.id)).resolves.toEqual({ status: "already_saved" });
+    mocks.addEntry.mockResolvedValue({ status: "exists" });
+    await expect(saveAlbum(album.id, "want_to_listen")).resolves.toEqual({ status: "already_saved" });
   });
 
   it("never writes to the cache when the id isn't a catalog album", async () => {
     mocks.lookupAlbum.mockResolvedValue(null);
-    await expect(saveToWantToListen(album.id)).resolves.toMatchObject({ status: "error" });
+    await expect(saveAlbum(album.id, "want_to_listen")).resolves.toMatchObject({ status: "error" });
     expect(mocks.upsertAlbum).not.toHaveBeenCalled();
-    expect(mocks.addWantToListen).not.toHaveBeenCalled();
+    expect(mocks.addEntry).not.toHaveBeenCalled();
   });
 
   it("returns a friendly error when the catalog is unavailable", async () => {
     mocks.lookupAlbum.mockRejectedValue(new CatalogError("quota exceeded", 4));
-    await expect(saveToWantToListen(album.id)).resolves.toMatchObject({
+    await expect(saveAlbum(album.id, "want_to_listen")).resolves.toMatchObject({
       status: "error",
       message: expect.stringMatching(/unavailable/),
     });

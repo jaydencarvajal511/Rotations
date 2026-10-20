@@ -2,7 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { describe, expect, it, vi } from "vitest";
 
 import type { Database } from "./database.types";
-import { addWantToListen, getEntryStatuses, listEntries, markListened, removeEntry } from "./entries";
+import { addEntry, getEntryStatuses, listEntries, markListened, removeEntry } from "./entries";
 
 type Result = { data?: unknown; error: { code: string; message: string } | null };
 
@@ -28,25 +28,37 @@ function fakeClient(result: Result) {
   return { client: client as unknown as SupabaseClient<Database>, builder };
 }
 
-describe("addWantToListen", () => {
-  it("inserts a want_to_listen row", async () => {
+describe("addEntry", () => {
+  it("inserts a want_to_listen row with no listened_at", async () => {
     const { client, builder } = fakeClient({ error: null });
-    await expect(addWantToListen(client, "u1", "42")).resolves.toEqual({ status: "added" });
+    await expect(addEntry(client, "u1", "42", "want_to_listen")).resolves.toEqual({ status: "added" });
     expect(builder.insert).toHaveBeenCalledWith({
       user_id: "u1",
       album_id: "42",
       status: "want_to_listen",
+      listened_at: null,
+    });
+  });
+
+  it("stamps listened_at when adding straight to listened", async () => {
+    const { client, builder } = fakeClient({ error: null });
+    await expect(addEntry(client, "u1", "42", "listened")).resolves.toEqual({ status: "added" });
+    expect(builder.insert).toHaveBeenCalledWith({
+      user_id: "u1",
+      album_id: "42",
+      status: "listened",
+      listened_at: expect.stringMatching(/^\d{4}-\d{2}-\d{2}T/),
     });
   });
 
   it("maps a unique violation to exists", async () => {
     const { client } = fakeClient({ error: { code: "23505", message: "duplicate" } });
-    await expect(addWantToListen(client, "u1", "42")).resolves.toEqual({ status: "exists" });
+    await expect(addEntry(client, "u1", "42", "want_to_listen")).resolves.toEqual({ status: "exists" });
   });
 
   it("rethrows other errors (e.g. RLS denial)", async () => {
     const { client } = fakeClient({ error: { code: "42501", message: "rls" } });
-    await expect(addWantToListen(client, "u1", "42")).rejects.toMatchObject({ code: "42501" });
+    await expect(addEntry(client, "u1", "42", "want_to_listen")).rejects.toMatchObject({ code: "42501" });
   });
 });
 

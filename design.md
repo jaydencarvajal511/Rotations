@@ -16,7 +16,7 @@ Rotations is a personal music-listening tracker. A signed-in user maintains two 
 **Core flows:**
 
 1. **Find an album.** User searches a music catalog (Deezer's, for now) by album or artist name from a search bar. Results show cover art, album name, artist, and release year.
-2. **Add it to a list.** From a search result, the user adds the album directly to "Want to Listen." (There's no "add to Listened directly" in v1 — the intended path is you queue it up, then hear it, then move it.)
+2. **Add it to a list.** From a search result, the user adds the album to "Want to Listen," or straight to "Listened" for albums they've already heard. (v1 only offered "Want to Listen" — the queue-then-move path is still the primary flow, but logging something you heard elsewhere shouldn't require a detour through the queue. Added post-parity; `listened_at` is set to the time it was added.)
 3. **Move it once heard.** From the "Want to Listen" list, the user moves an album to "Listened." This is the core state transition the whole data model is built around.
 4. **Browse and sort.** Both lists support sorting (e.g., by date added, alphabetically, by release date) and a search/filter box to find an album already in one of the lists.
 

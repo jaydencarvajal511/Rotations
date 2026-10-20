@@ -32,14 +32,19 @@ export async function getEntryStatuses(
 
 export type AddEntryResult = { status: "added" } | { status: "exists" };
 
-export async function addWantToListen(
+/** Adds an album to one of the user's lists. Listened entries are stamped as heard now. */
+export async function addEntry(
   supabase: Client,
   userId: string,
   albumId: string,
+  status: EntryStatus,
 ): Promise<AddEntryResult> {
-  const { error } = await supabase
-    .from("listening_entries")
-    .insert({ user_id: userId, album_id: albumId, status: "want_to_listen" });
+  const { error } = await supabase.from("listening_entries").insert({
+    user_id: userId,
+    album_id: albumId,
+    status,
+    listened_at: status === "listened" ? new Date().toISOString() : null,
+  });
 
   if (error?.code === UNIQUE_VIOLATION) return { status: "exists" };
   if (error) throw error;
