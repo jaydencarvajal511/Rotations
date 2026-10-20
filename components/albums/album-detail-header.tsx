@@ -18,7 +18,7 @@ export function AlbumDetailHeader({ album }: { album: AlbumSummary }) {
         priority
         className="rounded-xl"
       />
-      <DialogDescription className="flex gap-2 font-medium text-primary">
+      <DialogDescription className="flex gap-2 font-medium text-primary-text">
         <span>{album.artist}</span>
         {year ? (
           <>

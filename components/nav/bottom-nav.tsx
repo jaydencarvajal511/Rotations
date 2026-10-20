@@ -33,7 +33,7 @@ export function BottomNav() {
               <Link
                 href={href}
                 aria-current={active ? "page" : undefined}
-                className={cn(itemClass, active ? "text-primary" : "text-muted-foreground hover:text-foreground")}
+                className={cn(itemClass, active ? "text-primary-text" : "text-muted-foreground hover:text-foreground")}
               >
                 <Icon aria-hidden className={cn("size-6", active && "stroke-[2.5]")} />
                 {label}

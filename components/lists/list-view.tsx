@@ -56,7 +56,7 @@ export function ListView({ title, status, entries, initialParams }: Props) {
   return (
     <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-4 p-4">
       <header className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold tracking-tight">
+        <h1 className="text-2xl font-semibold tracking-tight text-primary-text">
           {title} <span className="text-muted-foreground">({entries.length})</span>
         </h1>
         {entries.length > 0 ? (

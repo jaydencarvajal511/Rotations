@@ -37,7 +37,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
         <button
           type="submit"
           aria-label="Search"
-          className="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-primary"
+          className="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-primary-text"
         >
           <Search aria-hidden className="size-5" />
         </button>
@@ -53,7 +53,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
 function EmptyPrompt() {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-3 text-center text-muted-foreground">
-      <Search aria-hidden className="size-12 text-primary" />
+      <Search aria-hidden className="size-12 text-primary-text" />
       <p className="max-w-xs">Search for an album to save it for later.</p>
     </div>
   );

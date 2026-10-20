@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Track the albums you want to hear and the ones you have.",
     start_url: "/",
     display: "standalone",
-    background_color: "#ffffff",
-    theme_color: "#ffffff",
+    background_color: "#e6e6ea",
+    theme_color: "#e6e6ea",
     icons: [
       { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
       { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
